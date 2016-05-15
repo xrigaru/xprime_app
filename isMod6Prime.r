@@ -27,8 +27,9 @@ isMod6Prime <- function(value){
     stop("method should be a value to evaluate")
   }
   
-  mod = valor %% 6
+  mod = value %% 6
   
-  return (c(mod, ((2 %% 6) == 1) || ((2 %% 6) == 5)))
-  
+  # return list with module number and boolen result
+  #return (c(mod, ((value %% 6) == 1) || ((value %% 6) == 5)))
+  c(mod, ((value %% 6) == 1) || ((value %% 6) == 5))
 }
