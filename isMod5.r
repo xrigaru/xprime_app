@@ -21,17 +21,13 @@
 # input: numeric value to divisibility calculate
 # 
 
-isMod6Prime <- function(value){
+isMod5 <- function(value){
   
   if(is.null(value)){
     stop("method should be a value to evaluate")
   }
   
-  mod = value %% 6
-  
   # return list with module number and boolen result
-  #return (c(mod, ((value %% 6) == 1) || ((value %% 6) == 5)))
-  #c(mod, ((value %% 6) == 1) || ((value %% 6) == 5))
-  return(((value %% 6) == 1) || ((value %% 6) == 5))
+  return(((value %% 5) == 0))
   
 }
