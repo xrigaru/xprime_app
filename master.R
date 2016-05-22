@@ -22,8 +22,8 @@ logFile = "logFile.csv"
 lengthBasePrime = 2
 
 #write basePrime to txt
-write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE);rm(basePrime)
-#♣lengthBasePrime = length(basePrime)
+write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE);#rm(basePrime)
+#lengthBasePrime = length(basePrime)
 
 #initial headers of log file
 logColNames = c("lowRangeNumber","highRangeNumber","lengthPTR", "lengthBP", "sqrtMR", "time", "date")
