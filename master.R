@@ -4,11 +4,11 @@ rm(list = ls())
 cat("\014") 
 
 # load sources
-source("DivisibleBy2.R")
-source("DivisibleBy5.R")
-source("DivisibleBy3.R")
-source("isDivisible.R")
-source("isDivisible.R")
+#source("DivisibleBy2.R")
+#source("DivisibleBy5.R")
+#source("DivisibleBy3.R")
+#source("isDivisible.R")
+#source("isDivisible.R")
 source("isMod6Prime.r")
 source("isMod5.r")
 source("isModuleN.r")
@@ -17,6 +17,16 @@ source("isModuleN.r")
 
 # this is the initial variable of primer numbers generator
 basePrime = c(2,3)
+file_basePrime = "basePrime.csv"
+logFile = "logFile.csv"
+lengthBasePrime = 2
+
+#write basePrime to txt
+write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE);rm(basePrime)
+#♣lengthBasePrime = length(basePrime)
+
+#initial headers of log file
+logColNames = c("lowRangeNumber","highRangeNumber","lengthPTR", "lengthBP", "sqrtMR", "time", "date")
 
 #initial range
 lowRangeNumber = 2
@@ -38,13 +48,21 @@ rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
 sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
 
 #get the range of primes in basePrime vector low to sqrtMaxRange
+#read.table(basePrime, header = FALSE, colClasses = "integer")
 primeTestRange = basePrime[basePrime<=sqrtMaxRange]
 
 #set rangeAnalysis to modify from use primeTestRange
 rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==FALSE]
 
+# write log file: initial record
+recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), length(basePrime), sqrtMaxRange, Sys.time(), Sys.Date())
+write.table(recordLogFile, file = logFile, append = FALSE, quote = FALSE, row.names = FALSE, sep = ";", col.names = logColNames)
+
 #set new values to basePrime
 basePrime = c(basePrime,rangeAnalysis)
+
+#append basePrime to txt
+write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
 
 # second cicle of calculations
 
@@ -71,14 +89,20 @@ rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==
 
 rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
 
+#append data to the log file
+recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), length(basePrime), sqrtMaxRange, Sys.time(), Sys.Date())
+write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
+
 #set new values to basePrime
 basePrime = c(basePrime,rangeAnalysis)
 
+#append basePrime to txt
+write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
 
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 1000
+conditionExitLoop = 5000
 
 while (continue){
   
@@ -108,7 +132,11 @@ while (continue){
   #clean NA to vector
   rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
   
-  if(length(rangeAnalysis==0)){
+  #append data to the log file
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), length(basePrime), sqrtMaxRange, Sys.time(), Sys.Date())
+  write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
+  
+  if(length(rangeAnalysis)==0){
     print("Stop: don't have more prime numbers")
     flush.console()
     break()
@@ -116,6 +144,9 @@ while (continue){
   
   #set new values to basePrime
   basePrime = c(basePrime,rangeAnalysis)
+  
+  #append basePrime to txt
+  write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
   
   
   if(highRangeNumber > conditionExitLoop){
