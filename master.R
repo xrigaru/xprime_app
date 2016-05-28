@@ -13,104 +13,113 @@ source("isMod6Prime.r")
 source("isMod5.r")
 source("isModuleN.r")
 
-# initial cicle
-
-# this is the initial variable of primer numbers generator
-basePrime = c(2,3)
 file_basePrime = "basePrime.csv"
 logFile = "logFile.csv"
-lengthBasePrime = 2
 
-#write basePrime to txt
-write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
-lengthBasePrime = length(basePrime)
-rm(basePrime)
+if(file.exists("basePrime.csv")){
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer")
+  lengthBasePrime = length(basePrime)
+  
+}else{
+  # initial cicle
+  
+  # this is the initial variable of primer numbers generator
+  basePrime = c(2,3)
+  lengthBasePrime = 2
+  
+  #write basePrime to txt
+  write.table(basePrime, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
+  lengthBasePrime = length(basePrime)
+  rm(basePrime)
+  
+  #initial headers of log file
+  logColNames = c("lowRangeNumber","highRangeNumber","lengthPTR", "lengthBP", "sqrtMR", "time", "date")
+  
+  #initial range
+  lowRangeNumber = 2
+  highRangeNumber = 3
+  
+  # move range up
+  temp=lowRangeNumber
+  lowRangeNumber = highRangeNumber
+  highRangeNumber = (temp+highRangeNumber)
+  rm(temp)
+  
+  # set range numbers to analice
+  rangeAnalysis = (lowRangeNumber+1):highRangeNumber
+  
+  # first fase to simplify range
+  rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
+  
+  #high value in range: get the square root of maximum value of range
+  sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
+  
+  #get the range of primes in basePrime vector low to sqrtMaxRange
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
+  primeTestRange = basePrime[basePrime<=sqrtMaxRange]
+  rm(basePrime)
+  
+  #set rangeAnalysis to modify from use primeTestRange
+  rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==FALSE]
+  
+  # write log file: initial record
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), lengthBasePrime, sqrtMaxRange, Sys.time(), Sys.Date())
+  write.table(recordLogFile, file = logFile, append = FALSE, quote = FALSE, row.names = FALSE, sep = ";", col.names = logColNames)
+  rm(logColNames)
+  rm(recordLogFile)
+  
+  #set new values to basePrime
+  #basePrime = c(basePrime,rangeAnalysis)
+  lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
+  
+  #append values of rangeAnalysis to file basePrime txt
+  write.table(rangeAnalysis, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE, append = TRUE)
+  
+  # second cicle of calculations
+  
+  # move range up
+  temp=lowRangeNumber
+  lowRangeNumber = highRangeNumber
+  highRangeNumber = (temp+highRangeNumber)
+  rm(temp)
+  
+  # set range numbers to analice
+  rangeAnalysis = (lowRangeNumber+1):highRangeNumber
+  
+  # first fase to simplify range
+  rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
+  
+  #high value in range: get the square root of maximum value of range
+  sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
+  
+  #get the range of primes in basePrime vector low to sqrtMaxRange
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
+  primeTestRange = basePrime[basePrime<=sqrtMaxRange]
+  rm(basePrime)
+  
+  #set rangeAnalysis to modify from use primeTestRange
+  rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==FALSE]
+  
+  rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
+  
+  #append data to the log file
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), lengthBasePrime, sqrtMaxRange, Sys.time(), Sys.Date())
+  write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
+  
+  #set new values to basePrime
+  #basePrime = c(basePrime,rangeAnalysis)
+  lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
+  
+  #append values of rangeAnalysis to file basePrime txt
+  write.table(rangeAnalysis, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE, append = TRUE)
+}
 
-#initial headers of log file
-logColNames = c("lowRangeNumber","highRangeNumber","lengthPTR", "lengthBP", "sqrtMR", "time", "date")
 
-#initial range
-lowRangeNumber = 2
-highRangeNumber = 3
-
-# move range up
-temp=lowRangeNumber
-lowRangeNumber = highRangeNumber
-highRangeNumber = (temp+highRangeNumber)
-rm(temp)
-
-# set range numbers to analice
-rangeAnalysis = (lowRangeNumber+1):highRangeNumber
-
-# first fase to simplify range
-rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
-
-#high value in range: get the square root of maximum value of range
-sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
-
-#get the range of primes in basePrime vector low to sqrtMaxRange
-basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
-primeTestRange = basePrime[basePrime<=sqrtMaxRange]
-rm(basePrime)
-
-#set rangeAnalysis to modify from use primeTestRange
-rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==FALSE]
-
-# write log file: initial record
-recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), lengthBasePrime, sqrtMaxRange, Sys.time(), Sys.Date())
-write.table(recordLogFile, file = logFile, append = FALSE, quote = FALSE, row.names = FALSE, sep = ";", col.names = logColNames)
-rm(logColNames)
-rm(recordLogFile)
-
-#set new values to basePrime
-#basePrime = c(basePrime,rangeAnalysis)
-lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
-
-#append values of rangeAnalysis to file basePrime txt
-write.table(rangeAnalysis, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE, append = TRUE)
-
-# second cicle of calculations
-
-# move range up
-temp=lowRangeNumber
-lowRangeNumber = highRangeNumber
-highRangeNumber = (temp+highRangeNumber)
-rm(temp)
-
-# set range numbers to analice
-rangeAnalysis = (lowRangeNumber+1):highRangeNumber
-
-# first fase to simplify range
-rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
-
-#high value in range: get the square root of maximum value of range
-sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
-
-#get the range of primes in basePrime vector low to sqrtMaxRange
-basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
-primeTestRange = basePrime[basePrime<=sqrtMaxRange]
-rm(basePrime)
-
-#set rangeAnalysis to modify from use primeTestRange
-rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, primeTestRange)==FALSE]
-
-rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
-
-#append data to the log file
-recordLogFile = list(lowRangeNumber, highRangeNumber, length(primeTestRange), lengthBasePrime, sqrtMaxRange, Sys.time(), Sys.Date())
-write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
-
-#set new values to basePrime
-#basePrime = c(basePrime,rangeAnalysis)
-lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
-
-#append values of rangeAnalysis to file basePrime txt
-write.table(rangeAnalysis, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE, append = TRUE)
 
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 10000000
+conditionExitLoop = 100
 
 while (continue){
   
