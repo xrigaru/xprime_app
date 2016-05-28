@@ -33,7 +33,7 @@ if(file.exists("basePrime.csv")){
   rm(basePrime)
   
   #initial headers of log file
-  logColNames = c("lowRangeNumber","highRangeNumber","lengthPTR", "lengthBP", "sqrtMR", "lengthRangeAnalysis", "time", "date")
+  logColNames = c("lowRangeNumber","highRangeNumber","lengthPrimeTestRange", "lengthBasePrime", "sqrtMaxRange", "lengthRangeAnalysis", "Time", "Date")
   
   #initial range
   lowRangeNumber = 2
@@ -112,7 +112,7 @@ if(file.exists("basePrime.csv")){
   # make a loop of cicle of calculations
   
   continue <- TRUE
-  conditionExitLoop = 100
+  conditionExitLoop = 1000
   
   while (continue){
     

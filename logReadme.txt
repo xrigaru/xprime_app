@@ -3,14 +3,14 @@ lowRangeNumber -> value of this Variable in this iteration
 
 highRangeNumber -> value of this Variable in this iteration 
 
-lengthPTR -> value of this Variable in this iteration. Length of primeTestRange
+lengthPrimeTestRange -> value of this Variable in this iteration. Length of primeTestRange. Length of prime number to use in calculation in this iteration
 
-lengthBP -> value of this Variable in this iteration. Length of basePrime
+lengthBasePrime -> value of this Variable in this iteration. Length of basePrime
 
-sqrtMR -> value of this Variable in this iteration. Length of sqrtMaxRange
+sqrtMaxRange -> value of this Variable in this iteration. Length of sqrtMaxRange
 
 lengthRangeAnalysis -> value of this Variable in this iteration. Length of rangeAnalysis
 
-time -> value of this Variable in this iteration 
+Time -> value of this Variable in this iteration 
 
-date -> value of this Variable in this iteration 
+Date -> value of this Variable in this iteration 
