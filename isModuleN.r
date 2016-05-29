@@ -30,7 +30,7 @@ isModuleN <- function(value, mod){
     stop("method should be a mod to evaluate")
   }
   
-  # return list with module number and boolen result
+  # return list with module number and boolean result
   return(((value %% mod) == 0))
   
 }

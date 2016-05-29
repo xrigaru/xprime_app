@@ -22,6 +22,9 @@ if(file.exists("basePrime.csv")){
   lengthBasePrime = resumeBasePrimeRecord[1,1]
   flag = TRUE
   
+  counterLoop = 2.68
+  nrowsReadBasePrime = 0
+  
 }else{
   # initial cicle
   
@@ -117,14 +120,14 @@ if(file.exists("basePrime.csv")){
   #write resumeBasePrime to actualize length
   write.table(c(lengthBasePrime, highRangeNumber, max(rangeAnalysis)), file = resumeBasePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
 
+  counterLoop = 0.76
+  nrowsReadBasePrime = 0
 }
 
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 15000000
-counterLoop = 0.4
-nrowsReadBasePrime = 0
+conditionExitLoop = 50000000
 
 while (continue){
   
@@ -153,7 +156,7 @@ while (continue){
   #get the range of primes in basePrime vector low to sqrtMaxRange
   if(counterLoop > 0){
     nrowsReadBasePrime = round(lengthBasePrime*0.5)-round(lengthBasePrime*(0.15*counterLoop))
-    counterLoop = counterLoop + 0.15
+    counterLoop = counterLoop + 0.06
   }else{
     nrowsReadBasePrime = round(lengthBasePrime/3)+1
   }
