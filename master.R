@@ -131,7 +131,7 @@ if(file.exists("basePrime.csv")){
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 10000000
+conditionExitLoop = 15000000
 counterLoop = 0.4
 nrowsReadBasePrime = 0
 
