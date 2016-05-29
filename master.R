@@ -16,6 +16,7 @@ source("isModuleN.r")
 file_basePrime = "basePrime.csv"
 logFile = "logFile.csv"
 resumeBasePrime = "resumeBasePrime.csv"
+flag = FALSE
 
 #initial headers of log file
 logColNames = c("lowRangeNumber","highRangeNumber","lengthBasePrimeRange", "lengthBasePrime", "sqrtMaxRange", "lengthRangeAnalysis", "Time", "Date")
@@ -130,7 +131,9 @@ if(file.exists("basePrime.csv")){
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 10000
+conditionExitLoop = 10000000
+counterLoop = 0.4
+nrowsReadBasePrime = 0
 
 while (continue){
   
@@ -157,7 +160,14 @@ while (continue){
   sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
   
   #get the range of primes in basePrime vector low to sqrtMaxRange
-  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = round(lengthBasePrime/3)+1)
+  if(counterLoop > 0){
+    nrowsReadBasePrime = round(lengthBasePrime*0.5)-round(lengthBasePrime*(0.15*counterLoop))
+    counterLoop = counterLoop + 0.15
+  }else{
+    nrowsReadBasePrime = round(lengthBasePrime/3)+1
+  }
+  
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = nrowsReadBasePrime)
   basePrimeRange = basePrime[basePrime<=sqrtMaxRange]
   rm(basePrime)
   
