@@ -4,11 +4,6 @@ rm(list = ls())
 cat("\014") 
 
 # load sources
-#source("DivisibleBy2.R")
-#source("DivisibleBy5.R")
-#source("DivisibleBy3.R")
-#source("isDivisible.R")
-#source("isDivisible.R")
 source("isMod6Prime.r")
 source("isMod5.r")
 source("isModuleN.r")
@@ -25,8 +20,6 @@ logColNames = c("lowRangeNumber","highRangeNumber","lengthBasePrimeRange", "leng
 if(file.exists("basePrime.csv")){
   resumeBasePrimeRecord = read.table(resumeBasePrime, header = FALSE, colClasses = "integer")
   lengthBasePrime = resumeBasePrimeRecord[1,1]
-  #lowRangeNumber = resumeBasePrimeRecord[1,2]
-  #highRangeNumber = resumeBasePrimeRecord[1,3]
   flag = TRUE
   
 }else{
@@ -74,7 +67,6 @@ if(file.exists("basePrime.csv")){
   rm(recordLogFile)
   
   #set new values to basePrime
-  #basePrime = c(basePrime,rangeAnalysis)
   lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
   
   #append values of rangeAnalysis to file basePrime txt
@@ -117,7 +109,6 @@ if(file.exists("basePrime.csv")){
   write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
   
   #set new values to basePrime
-  #basePrime = c(basePrime,rangeAnalysis)
   lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
   
   #append values of rangeAnalysis to file basePrime txt
@@ -191,7 +182,6 @@ while (continue){
   }
   
   #set new values to basePrime
-  #basePrime = c(basePrime,rangeAnalysis)
   lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
   
   #append values of rangeAnalysis to file basePrime txt
