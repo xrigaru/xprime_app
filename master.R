@@ -1,7 +1,11 @@
 
-#clean workspace
+#clean workspac##library(doParallele
 rm(list = ls())
 cat("\014") 
+
+#library of parallel work
+library(doParallel)
+registerDoParallel()
 
 # load sources
 source("isMod6Prime.r")
@@ -12,6 +16,12 @@ file_basePrime = "basePrime.csv"
 logFile = "logFile.csv"
 resumeBasePrime = "resumeBasePrime.csv"
 flag = FALSE
+
+#detect cores and create cluster with all cores
+mycluster = makeCluster(max(1, detectCores()-1))
+
+#register our cluster
+registerDoParallel(mycluster)
 
 #initial headers of log file
 logColNames = c("lowRangeNumber","highRangeNumber","lengthBasePrimeRange", "lengthBasePrime", "sqrtMaxRange", "lengthRangeAnalysis", "Time", "Date")
@@ -129,7 +139,8 @@ if(file.exists("basePrime.csv")){
 continue <- TRUE
 conditionExitLoop = 50000000
 
-while (continue){
+system.time(
+  while (continue){
   
   #actualize the values of iteration 
   if (flag){
@@ -148,7 +159,8 @@ while (continue){
   lengthRangeAnalysis = scopeRange - highRangeNumber
   
   # first fase to simplify range
-  rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
+  #rangeAnalysis = rangeAnalysis[sapply(rangeAnalysis,isMod6Prime)==TRUE]
+  rangeAnalysis = rangeAnalysis[parSapply(mycluster, rangeAnalysis,isMod6Prime)==TRUE]
   
   #high value in range: get the square root of maximum value of range
   sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
@@ -167,7 +179,8 @@ while (continue){
   
   #set rangeAnalysis to modify from use basePrimeRange
   for(i in seq(from=1, to=length(basePrimeRange), by=1)) {
-    rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, basePrimeRange[i])==FALSE]
+    #rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, basePrimeRange[i])==FALSE]
+    rangeAnalysis = rangeAnalysis[parSapply(mycluster, rangeAnalysis, FUN = isModuleN, basePrimeRange[i])==FALSE]
   }
   
   #clean NA to vector
@@ -196,5 +209,7 @@ while (continue){
   if(highRangeNumber > conditionExitLoop){
     continue <- FALSE
   }
-}
-
+  }
+)
+#stop the cluster
+stopCluster(mycluster)
