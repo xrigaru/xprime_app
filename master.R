@@ -149,7 +149,8 @@ system.time(
     flag = FALSE
   }else{
     lowRangeNumber = highRangeNumber
-    highRangeNumber = max(rangeAnalysis)
+    highRangeNumber = min(rangeAnalysis)
+    topRangeNumber = max(rangeAnalysis)
   }
   
   scopeRange = lowRangeNumber + highRangeNumber
@@ -184,7 +185,8 @@ system.time(
   }
   
   #clean NA to vector
-  rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
+  rangeAnalysis = rangeAnalysis[!is.na(rangeAnalysis)]
+  rangeAnalysis = rangeAnalysis[rangeAnalysis > topRangeNumber]
   
   #append data to the log file
   recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, lengthRangeAnalysis, Sys.time(), Sys.Date())
