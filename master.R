@@ -1,5 +1,5 @@
 
-#clean workspac##library(doParallele
+#clean workspac##library(doParallel)
 rm(list = ls())
 cat("\014") 
 
