@@ -11,6 +11,7 @@ registerDoParallel()
 source("isMod6Prime.r")
 source("isMod5.r")
 source("isModuleN.r")
+source("getIncrementToBasePrimeLoad.r")
 
 file_basePrime = "basePrime.csv"
 logFile = "logFile.csv"
@@ -24,7 +25,7 @@ mycluster = makeCluster(max(1, detectCores()-1))
 registerDoParallel(mycluster)
 
 #initial headers of log file
-logColNames = c("lowRangeNumber","highRangeNumber","lengthBasePrimeRange", "lengthBasePrime", "sqrtMaxRange", "lengthRangeAnalysis", "Time", "Date")
+logColNames = c("lowRangeNumber","highRangeNumber","lengthBasePrimeRange", "lengthBasePrime", "sqrtMaxRange", "lengthRangeAnalysis", "Time", "Date", "nrowsReadBasePrime")
 
 # conditional to verify if exists file basePrime.csv
 if(file.exists("basePrime.csv")){
@@ -32,7 +33,7 @@ if(file.exists("basePrime.csv")){
   lengthBasePrime = resumeBasePrimeRecord[1,1]
   flag = TRUE
   
-  counterLoop = 2.68
+  #counterLoop = 2.68
   nrowsReadBasePrime = 0
   
 }else{
@@ -66,7 +67,7 @@ if(file.exists("basePrime.csv")){
   sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
   
   #get the range of primes in basePrime vector low to sqrtMaxRange
-  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrows = lengthBasePrime)
   basePrimeRange = basePrime[basePrime<=sqrtMaxRange]
   rm(basePrime)
   
@@ -74,7 +75,7 @@ if(file.exists("basePrime.csv")){
   rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, basePrimeRange)==FALSE]
   
   # write log file: initial record
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date(),0)
   write.table(recordLogFile, file = logFile, append = FALSE, quote = FALSE, row.names = FALSE, sep = ";", col.names = logColNames)
   rm(logColNames)
   rm(recordLogFile)
@@ -108,7 +109,7 @@ if(file.exists("basePrime.csv")){
   sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
   
   #get the range of primes in basePrime vector low to sqrtMaxRange
-  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = lengthBasePrime)
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrows = lengthBasePrime)
   basePrimeRange = basePrime[basePrime<=sqrtMaxRange]
   rm(basePrime)
   
@@ -118,7 +119,7 @@ if(file.exists("basePrime.csv")){
   rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
   
   #append data to the log file
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date(),0)
   write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
   
   #set new values to basePrime
@@ -130,14 +131,14 @@ if(file.exists("basePrime.csv")){
   #write resumeBasePrime to actualize length
   write.table(c(lengthBasePrime, highRangeNumber, max(rangeAnalysis)), file = resumeBasePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
 
-  counterLoop = 0.772
+  counterLoop = 3
   nrowsReadBasePrime = 0
 }
 
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 100000000
+conditionExitLoop = 1000
 topBasePrimeRange = highRangeNumber
 
 system.time(
@@ -171,14 +172,16 @@ system.time(
   sqrtMaxRange = round(sqrt(max(rangeAnalysis)))
   
   #get the range of primes in basePrime vector low to sqrtMaxRange
-  if(counterLoop > 0){
-    nrowsReadBasePrime = round(lengthBasePrime*0.5)-round(lengthBasePrime*(0.15*counterLoop))
-    counterLoop = counterLoop + 0.057
+  if(counterLoop > 12){
+    #nrowsReadBasePrime = round(lengthBasePrime*0.5)-round(lengthBasePrime*(0.15*counterLoop))
+    #counterLoop = counterLoop + 0.057
+    nrowsReadBasePrime = round(getIncrementToBasePrimeLoad (counterLoop))
   }else{
     nrowsReadBasePrime = round(lengthBasePrime/3)+1
   }
+  counterLoop = counterLoop + 1
   
-  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrow = nrowsReadBasePrime)
+  basePrime = read.table(file_basePrime, header = FALSE, colClasses = "integer", nrows = nrowsReadBasePrime)
   basePrimeRange = basePrime[basePrime<=sqrtMaxRange]
   rm(basePrime)
   
@@ -193,7 +196,7 @@ system.time(
   rangeAnalysis = rangeAnalysis[rangeAnalysis > topRangeNumber]
   
   #append data to the log file
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date(), nrowsReadBasePrime)
   write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
   
   #test if exists new prime number in range analysis
