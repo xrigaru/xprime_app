@@ -1,5 +1,5 @@
 
-#clean workspac##library(doParallel)
+#clean workspace
 rm(list = ls())
 cat("\014") 
 
@@ -74,7 +74,7 @@ if(file.exists("basePrime.csv")){
   rangeAnalysis = rangeAnalysis[mapply(isModuleN, rangeAnalysis, basePrimeRange)==FALSE]
   
   # write log file: initial record
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, lengthRangeAnalysis, Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
   write.table(recordLogFile, file = logFile, append = FALSE, quote = FALSE, row.names = FALSE, sep = ";", col.names = logColNames)
   rm(logColNames)
   rm(recordLogFile)
@@ -118,7 +118,7 @@ if(file.exists("basePrime.csv")){
   rangeAnalysis=rangeAnalysis[!is.na(rangeAnalysis)]
   
   #append data to the log file
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, lengthRangeAnalysis, Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
   write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
   
   #set new values to basePrime
@@ -130,14 +130,15 @@ if(file.exists("basePrime.csv")){
   #write resumeBasePrime to actualize length
   write.table(c(lengthBasePrime, highRangeNumber, max(rangeAnalysis)), file = resumeBasePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE)
 
-  counterLoop = 0.76
+  counterLoop = 0.772
   nrowsReadBasePrime = 0
 }
 
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 50000000
+conditionExitLoop = 100000000
+topBasePrimeRange = highRangeNumber
 
 system.time(
   while (continue){
@@ -148,15 +149,18 @@ system.time(
     highRangeNumber = resumeBasePrimeRecord[3,1]
     flag = FALSE
   }else{
-    lowRangeNumber = highRangeNumber
+    lowRangeNumber = topBasePrimeRange
     highRangeNumber = min(rangeAnalysis)
     topRangeNumber = max(rangeAnalysis)
+    topBasePrimeRange = min(rangeAnalysis)
   }
   
   scopeRange = lowRangeNumber + highRangeNumber
   
   # set range numbers to analice
+  topBasePrimeRange = max(rangeAnalysis)
   rangeAnalysis = (highRangeNumber+1):scopeRange
+  rangeAnalysis = rangeAnalysis[rangeAnalysis > topRangeNumber]
   lengthRangeAnalysis = scopeRange - highRangeNumber
   
   # first fase to simplify range
@@ -169,7 +173,7 @@ system.time(
   #get the range of primes in basePrime vector low to sqrtMaxRange
   if(counterLoop > 0){
     nrowsReadBasePrime = round(lengthBasePrime*0.5)-round(lengthBasePrime*(0.15*counterLoop))
-    counterLoop = counterLoop + 0.06
+    counterLoop = counterLoop + 0.057
   }else{
     nrowsReadBasePrime = round(lengthBasePrime/3)+1
   }
@@ -189,11 +193,11 @@ system.time(
   rangeAnalysis = rangeAnalysis[rangeAnalysis > topRangeNumber]
   
   #append data to the log file
-  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, lengthRangeAnalysis, Sys.time(), Sys.Date())
+  recordLogFile = list(lowRangeNumber, highRangeNumber, length(basePrimeRange), lengthBasePrime, sqrtMaxRange, length(rangeAnalysis), Sys.time(), Sys.Date())
   write.table(recordLogFile, file = logFile, append = TRUE, quote = FALSE, row.names = FALSE, sep = ";", col.names = FALSE)
   
   #test if exists new prime number in range analysis
-  if(length(rangeAnalysis)==0){
+  if(length(rangeAnalysis) < 1){
     print("Stop: don't have more prime numbers")
     flush.console()
     break()
@@ -201,6 +205,9 @@ system.time(
   
   #set new values to basePrime
   lengthBasePrime = lengthBasePrime + length(rangeAnalysis)
+  
+  #key
+  topBasePrimeRange = topRangeNumber
   
   #append values of rangeAnalysis to file basePrime txt
   write.table(rangeAnalysis, file = file_basePrime, quote = FALSE,  row.names = FALSE, col.names = FALSE, append = TRUE)
