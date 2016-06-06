@@ -33,7 +33,7 @@ if(file.exists("basePrime.csv")){
   lengthBasePrime = resumeBasePrimeRecord[1,1]
   flag = TRUE
   
-  #counterLoop = 2.68
+  counterLoop = resumeBasePrimeRecord[4,1]
   nrowsReadBasePrime = 0
   
 }else{
@@ -138,7 +138,7 @@ if(file.exists("basePrime.csv")){
 # make a loop of cicle of calculations
 
 continue <- TRUE
-conditionExitLoop = 1000
+conditionExitLoop = 100000000
 topBasePrimeRange = highRangeNumber
 
 system.time(
